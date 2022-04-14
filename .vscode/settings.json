@@ -1,0 +1,9 @@
+{
+  "terminal.integrated.profiles.osx": {
+    "zsh": {
+      "path": "zsh",
+      "args": ["-i"]
+    }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
