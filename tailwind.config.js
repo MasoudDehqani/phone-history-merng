@@ -1,6 +1,6 @@
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./apps/client/src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {},

@@ -51,9 +51,20 @@ const ReviewType = new GraphQLObjectType({
           model: { type: GraphQLString },
           priceRange: { type: GraphQLString }
         },
-        resolve: ({ phoneId, brand, model, priceRange }) => {
+        resolve: (args) => {
+          if (!args) return PhoneDocument.find({});
+          const { phoneId, brand, model, priceRange } = args;
           const findValue = phoneId || brand || model || priceRange;
-          if (!findValue) return null;
+          if (findValue) {
+            return PhoneDocument.find({
+              $or: [
+                { id: findValue },
+                { brand: findValue },
+                { model: findValue },
+                { priceRange: findValue }
+              ]
+            });
+          }
         }
       },
       reviews: { type: new GraphQLList(ReviewType) },

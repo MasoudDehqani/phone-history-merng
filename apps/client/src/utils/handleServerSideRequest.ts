@@ -22,17 +22,28 @@ const handleRequest = async (url: string, param: string) => {
 
 export const handlePhonesServerSideRequests = (): GetServerSideProps => {
   const getServerSideProps: GetServerSideProps = async (ctx) => {
-    // const queryParam = getQueryParamValue(ctx.params);
-    // const response: PhonesDataType = await handleRequest(BaseUrls.PhonesBaseUrl, queryParam);
-    // const { data: { phones } } = response;
+    const query = `
+      query {
+        phones {
+          id
+          brand
+          model
+          priceRange
+          reviewsCount
+          avgRate
+        }
+      }`
     
-    // return {
-    //   props: {
-    //     phones
-    //   }
-    // }
+    const phonesData = await fetch("http://localhost:3333/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+    const phonesDataJson = await phonesData.json();
     return {
-      props: {}
+      props: {
+        phones: phonesDataJson.data.phones,
+      }
     }
   }
 
