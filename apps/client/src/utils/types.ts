@@ -13,7 +13,7 @@ export type ReviewsDataType = {
 }
 
 export type PhoneType = {
-  phoneId: string,
+  id: string,
   brand: string,
   model: string,
   priceRange: 1 | 2 | 3 | 4 | 5,

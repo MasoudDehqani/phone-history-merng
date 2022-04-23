@@ -4,6 +4,7 @@ import usePhoneContext from "~components/Hooks/usePhoneContext"
 import { PhoneStateActions } from "~components/Reducers/phoneReducer"
 import type { PhoneType } from "~utils/types"
 import ratingStyles from "../../../styles/rating.module.css"
+import { handleDeletePhone } from "~utils/handleClientSideRequests"
 
 export default function Table() {
 
@@ -13,34 +14,15 @@ export default function Table() {
   //   dispatch({ type: PhoneStateActions.FILL, payload: phonesData })
   // }, [dispatch, phonesData])
 
-  const handleDeletePhone = (phoneId: string) => {
-    return async () => {
-      try {
-        const response = await fetch('/graphql', {
-          method: "POST",
-          body: JSON.stringify({ phoneId }),
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-        })
-  
-        const data = await response.json()
-        dispatch({ type: PhoneStateActions.DELETE, payload: { idToDelete: { phoneId } } })
-      } catch(err) {
-        console.log(err)
-      }
-    }
-  }
 
-  const mapPhonesToTableRows = ({ phoneId, brand, model, priceRange: priceRange, avgRate: avgRate, reviewsCount } : PhoneType) => {
+  const mapPhonesToTableRows = ({ id, brand, model, priceRange: priceRange, avgRate: avgRate, reviewsCount } : PhoneType) => {
 
     const tdClassName = "border text-center px-8 py-4"
     const priceRangeSymbol = "$"
     const ratingPercent = (Number(avgRate) * 100) / 5;
 
     return (
-      <tr key={phoneId}>
+      <tr key={id}>
         <td className={tdClassName}>
           <Link href={`/brands/${brand}`}>
             <a>{brand}</a>
@@ -57,7 +39,7 @@ export default function Table() {
           </Link>
         </td>
         <td className={tdClassName}>
-          <Link href={{ pathname: `/phone-reviews/${phoneId}` }}>
+          <Link href={{ pathname: `/phone-reviews/${id}` }}>
             <a>
               <div className="flex w-full items-center">
                 <div className="text-gray-400 text-xl relative m-0 p-0" style={{ unicodeBidi: "bidi-override" }}>
@@ -74,7 +56,7 @@ export default function Table() {
           </Link>
         </td>
         <td className={tdClassName}>
-          <button className="text-red-600" onClick={handleDeletePhone(phoneId)}>DELETE</button>
+          <button className="text-red-600" onClick={handleDeletePhone(id, dispatch)}>DELETE</button>
         </td>
       </tr>
     )

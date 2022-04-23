@@ -62,9 +62,33 @@ export const handleAddPhone = (brand: string, model: string, priceRange: number,
   }
 }
 
-const handleDeletePhone = (phoneId: string) => {
+export const handleDeletePhone = (phoneId: string, dispatch: Dispatch<any>) => {
+
   const query = `
-    query {
+    mutation ($phoneId: ID!) {
       deletePhone(phoneId: $phoneId)
     }`
+  
+  return async () => {
+    try {
+      const response = await fetch('/graphql', {
+        method: "POST",
+        body: JSON.stringify({
+          query,
+          variables: { phoneId }
+        }),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      })
+
+      const data = await response.json()
+      console.log("phoneId: ", phoneId)
+      console.log("response: ", response, "data: ", data)
+      dispatch({ type: PhoneStateActions.DELETE, payload: { idToDelete: { phoneId } } })
+    } catch(err) {
+      console.log(err)
+    }
+  }
 }

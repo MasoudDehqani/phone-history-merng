@@ -13,7 +13,6 @@ import Table from "./Table/Table";
 export default function Phones({ data } : { data: PhoneType[] }) {
 
   const [phonesData, dispatch] = usePhoneReducer(data)
-  console.log(data)
   const router = useRouter()
 
   return (

@@ -146,15 +146,16 @@ const ReviewType = new GraphQLObjectType({
           // return newReview.save();
         }
       },
-      // deletePhone: {
-      //   type: GraphQLInt,
-      //   args: {
-      //     phoneId: { type: GraphQLID }
-      //   },
-      //   resolve: async (parent, args) => {
-      //     return await PhoneDocument.deleteOne({ phoneId: args.phoneId })
-      //   }
-      // }
+      deletePhone: {
+        type: GraphQLInt,
+        args: {
+          phoneId: { type: GraphQLID }
+        },
+        resolve: async (parent, args) => {
+          const res = await PhoneDocument.deleteOne({ _id: args.phoneId })
+          return res.deletedCount
+        }
+      }
     }
   })
   
