@@ -15,9 +15,14 @@ export const handleAddPhone = (brand: string, model: string, priceRange: number,
     priceRange: +priceRange
   }
 
+  // const query = `
+  //   mutation AddPhone($brand: String, $model: String, $priceRange: Int) {
+  //     addPhone(brand: $brand, model: $model, priceRange: $priceRange)
+  //   }`
+
   const query = `
-    mutation {
-      addPhone(brand: "${trimmedBrand}", model: "${trimmedModel}", priceRange: ${+priceRange}) {
+    mutation ($brand: String, $model: String, $priceRange: Int) {
+      addPhone(brand: $brand, model: $model, priceRange: $priceRange) {
         id
         brand
         model
@@ -40,8 +45,11 @@ export const handleAddPhone = (brand: string, model: string, priceRange: number,
           'Content-Type': 'application/json'
         },
       })
-    
-      const { data } = await response.json()
+
+      console.log("response: ", response)
+      
+      const data = await response.json()
+      console.log("data: ", data)
       const { phoneId } = data;
       const payloadData = {
         phoneId, ...body
@@ -52,4 +60,11 @@ export const handleAddPhone = (brand: string, model: string, priceRange: number,
       console.log(err)
     }
   }
+}
+
+const handleDeletePhone = (phoneId: string) => {
+  const query = `
+    query {
+      deletePhone(phoneId: $phoneId)
+    }`
 }

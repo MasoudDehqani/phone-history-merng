@@ -14,23 +14,23 @@ export default function Table() {
   // }, [dispatch, phonesData])
 
   const handleDeletePhone = (phoneId: string) => {
-    // return async () => {
-    //   try {
-    //     const response = await fetch('http://localhost:5001/api/v1/phones', {
-    //       method: "DELETE",
-    //       body: JSON.stringify({ phoneId }),
-    //       headers: {
-    //         'Accept': 'application/json',
-    //         'Content-Type': 'application/json'
-    //       },
-    //     })
+    return async () => {
+      try {
+        const response = await fetch('/graphql', {
+          method: "POST",
+          body: JSON.stringify({ phoneId }),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+        })
   
-    //     const data = await response.json()
-    //     dispatch({ type: PhoneStateActions.DELETE, payload: { idToDelete: { phoneId } } })
-    //   } catch(err) {
-    //     console.log(err)
-    //   }
-    // }
+        const data = await response.json()
+        dispatch({ type: PhoneStateActions.DELETE, payload: { idToDelete: { phoneId } } })
+      } catch(err) {
+        console.log(err)
+      }
+    }
   }
 
   const mapPhonesToTableRows = ({ phoneId, brand, model, priceRange: priceRange, avgRate: avgRate, reviewsCount } : PhoneType) => {
@@ -74,7 +74,7 @@ export default function Table() {
           </Link>
         </td>
         <td className={tdClassName}>
-          {/* <button className="text-red-600" onClick={handleDeletePhone(phoneId)}>DELETE</button> */}
+          <button className="text-red-600" onClick={handleDeletePhone(phoneId)}>DELETE</button>
         </td>
       </tr>
     )

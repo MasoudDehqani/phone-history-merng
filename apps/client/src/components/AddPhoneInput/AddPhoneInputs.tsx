@@ -11,7 +11,7 @@ export default function AddPhoneInputs() {
     priceRange: 1
   })
 
-  console.log(model, brand, priceRange)
+  // console.log(model, brand, priceRange)
   const { dispatch } = usePhoneContext()
 
   // const handleInputValues = (inputId: string, newInputValue: string | number) => {

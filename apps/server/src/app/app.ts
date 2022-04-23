@@ -1,4 +1,5 @@
 import { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLFloat, GraphQLSchema, GraphQLInt, GraphQLID } from 'graphql';
+import mongoose from 'mongoose';
 import { PhoneDocument } from '../model/phone';
 import { ReviewDocument } from '../model/review';
 
@@ -29,6 +30,14 @@ const ReviewType = new GraphQLObjectType({
       avgRate: { type: GraphQLFloat },
       reviewsCount: { type: GraphQLInt }
     }),
+  })
+
+  const ReviewsType = new GraphQLObjectType({
+    name: "reviews",
+    fields: () => ({
+      reviews: { type: new GraphQLList(ReviewType) },
+      avgRate: { type: GraphQLFloat },
+    })
   })
   
   const RootQuery = new GraphQLObjectType({
@@ -67,7 +76,27 @@ const ReviewType = new GraphQLObjectType({
           }
         }
       },
-      reviews: { type: new GraphQLList(ReviewType) },
+      reviews: { 
+        type: ReviewsType,
+        args: {
+          phoneId: { type: GraphQLID },
+        },
+        resolve: async (parent, args) => {
+          const reviews = await PhoneDocument.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(args.phoneId) } },
+            { $unwind: '$reviews' },
+            { $group: { _id: '$_id', avgRate: { $avg: '$reviews.rate' }, reviews: { $push: '$reviews' } } }
+          ])
+          return reviews[0];
+          // console.log(reviews);
+          // const phone = await PhoneDocument.findById(args.phoneId)
+          // const avgRate = phone.reviews.reduce((acc, cur) => acc + cur.rate, 0) / phone.reviews.length;
+          // return {
+          //   reviews: phone.reviews,
+          //   avgRate
+          // }
+        }
+      },
     },
   })
   
@@ -82,6 +111,7 @@ const ReviewType = new GraphQLObjectType({
           priceRange: { type: GraphQLInt }
         },
         resolve(parent, args) {
+          console.log("args: ", args)
           const newPhone = new PhoneDocument({
             brand: args.brand,
             model: args.model,
@@ -115,7 +145,16 @@ const ReviewType = new GraphQLObjectType({
           return phone.save();
           // return newReview.save();
         }
-      }
+      },
+      // deletePhone: {
+      //   type: GraphQLInt,
+      //   args: {
+      //     phoneId: { type: GraphQLID }
+      //   },
+      //   resolve: async (parent, args) => {
+      //     return await PhoneDocument.deleteOne({ phoneId: args.phoneId })
+      //   }
+      // }
     }
   })
   
