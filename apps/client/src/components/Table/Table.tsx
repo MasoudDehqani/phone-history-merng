@@ -10,10 +10,6 @@ export default function Table() {
 
   const { phonesData, dispatch } = usePhoneContext()
 
-  // useEffect(() => {
-  //   dispatch({ type: PhoneStateActions.FILL, payload: phonesData })
-  // }, [dispatch, phonesData])
-
 
   const mapPhonesToTableRows = ({ id, brand, model, priceRange: priceRange, avgRate: avgRate, reviewsCount } : PhoneType) => {
 

@@ -52,7 +52,7 @@ const ReviewType = new GraphQLObjectType({
           return PhoneDocument.findById(args.phoneId);
         }
       },
-      phones: { 
+      phones: {
         type: new GraphQLList(PhoneType),
         args: {
           phoneId: { type: GraphQLString },
@@ -60,19 +60,18 @@ const ReviewType = new GraphQLObjectType({
           model: { type: GraphQLString },
           priceRange: { type: GraphQLString }
         },
-        resolve: (args) => {
-          if (!args) return PhoneDocument.find({});
+        resolve: async (parent, args) => {
+          console.log("args: ", args)
+          if (Object.keys(args).length === 0) return PhoneDocument.find({});
           const { phoneId, brand, model, priceRange } = args;
           const findValue = phoneId || brand || model || priceRange;
+          console.log("findValue: ", findValue)
+          const keyValuePair = Object.entries(args)[0]
           if (findValue) {
-            return PhoneDocument.find({
-              $or: [
-                { id: findValue },
-                { brand: findValue },
-                { model: findValue },
-                { priceRange: findValue }
-              ]
-            });
+            console.log("cherto pert")
+            const phone = await PhoneDocument.find({ [keyValuePair[0]]: keyValuePair[1] })
+            console.log("phone: ", phone)
+            return phone
           }
         }
       },

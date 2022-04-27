@@ -3,11 +3,12 @@ import { ParsedUrlQuery } from "querystring";
 import type { CrudMethods, PhonesDataType, ReviewsDataType } from "./types";
 // import BaseUrls from "constants/baseUrls";
 
-const getQueryParamValue = (params: ParsedUrlQuery | undefined): string => {
+const getQueryParamValue = (params: ParsedUrlQuery | undefined): [string, string | string[]] => {
   const paramsObjectExists = !!params && Object.entries(params).length !== 0;
-  if (!paramsObjectExists) return "";
-  const paramsObject: { [key: string]: string } = JSON.parse(JSON.stringify(params))
-  return Object.values(paramsObject)[0];
+  if (!paramsObjectExists) return ["", ""];
+  // const paramsObject: { [key: string]: string } = JSON.parse(JSON.stringify(params))
+  return Object.entries(params)[0];
+  // return Object.values(paramsObject)[0];
 }
 
 const handleRequest = async (url: string, param: string) => {
@@ -22,9 +23,15 @@ const handleRequest = async (url: string, param: string) => {
 
 export const handlePhonesServerSideRequests = (): GetServerSideProps => {
   const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const query = `
-      query {
-        phones {
+    const params = getQueryParamValue(ctx.params);
+    // console.log("params: ", params)
+    const queryArgs = {
+      [params[0]]: params[1]
+    }
+    console.log({ [params[0]]: params[1] })
+    const query = params[0] !== "" ? `
+      query ($${params[0]}: String) {
+        phones(${params[0]}: $${params[0]}) {
           id
           brand
           model
@@ -32,17 +39,42 @@ export const handlePhonesServerSideRequests = (): GetServerSideProps => {
           reviewsCount
           avgRate
         }
-      }`
+      }` : `
+        query {
+          phones {
+            id
+            brand
+            model
+            priceRange
+            reviewsCount
+            avgRate  
+          }
+        }`
     
-    const phonesData = await fetch("http://localhost:3333/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query }),
-    });
-    const phonesDataJson = await phonesData.json();
-    return {
-      props: {
-        phones: phonesDataJson.data.phones,
+    console.log(query)
+    try {
+      const phonesData = await fetch("http://localhost:3333/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query,
+          variables: {
+            [params[0]]: params[1]
+          }
+        }),
+      });
+      // console.log(phonesData)
+      const phonesDataJson = await phonesData.json();
+      // console.log(phonesDataJson)
+      return {
+        props: {
+          phones: phonesDataJson.data.phones,
+        }
+      }
+    } catch(err) {
+      console.log(err)
+      return {
+        props: {}
       }
     }
   }
