@@ -35,8 +35,11 @@ const ReviewType = new GraphQLObjectType({
   const ReviewsType = new GraphQLObjectType({
     name: "reviews",
     fields: () => ({
+      id: { type: GraphQLID },
       reviews: { type: new GraphQLList(ReviewType) },
       avgRate: { type: GraphQLFloat },
+      model: { type: GraphQLString },
+      brand: { type: GraphQLString }
     })
   })
   
@@ -83,11 +86,12 @@ const ReviewType = new GraphQLObjectType({
         resolve: async (parent, args) => {
           const reviews = await PhoneDocument.aggregate([
             { $match: { _id: new mongoose.Types.ObjectId(args.phoneId) } },
-            { $unwind: '$reviews' },
-            { $group: { _id: '$_id', avgRate: { $avg: '$reviews.rate' }, reviews: { $push: '$reviews' } } }
+            // { $group: { _id: "$_id", brand: { $first: "$brand" }, model: { $first: "$model" }, reviews: { $push: {$first: "$reviews"} } } },
+            { $unwind: { path: '$reviews', preserveNullAndEmptyArrays: true } },
+            { $group: { _id: "$_id", avgRate: { $avg: '$reviews.rate' }, reviews: { $push: '$reviews' }, brand: { $first: '$brand' }, model: { $first: '$model' } } },
+            { $project: { _id: 0, id: "$_id", reviews: 1, avgRate: 1, brand: 1, model: 1 } }
           ])
           return reviews[0];
-          // console.log(reviews);
           // const phone = await PhoneDocument.findById(args.phoneId)
           // const avgRate = phone.reviews.reduce((acc, cur) => acc + cur.rate, 0) / phone.reviews.length;
           // return {

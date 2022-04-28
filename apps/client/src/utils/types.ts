@@ -30,15 +30,15 @@ export type ReviewType = {
 export interface PhoneReviewType {
   brand: string,
   model: string,
-  reviewId: string,
-  reviewRate: number,
-  reviewText: string
+  id: string,
+  rate: number,
+  text: string
 }
 
 export interface PhoneReviewDataType {
   brand: string,
   model: string,
-  noReview: boolean,
+  avgRate: number | null,
   reviews: PhoneReviewType[]
 }
 

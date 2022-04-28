@@ -84,7 +84,8 @@ export const handlePhonesServerSideRequests = (): GetServerSideProps => {
 
 export const handleReviewsServerSideRequests = (): GetServerSideProps => {
   const getServerSideProps: GetServerSideProps = async (ctx) => {
-    // const queryParam = getQueryParamValue(ctx.params);
+    const queryParam = getQueryParamValue(ctx.params);
+    console.log(queryParam)
     // const response: ReviewsDataType = await handleRequest(BaseUrls.ReviewsBaseUrl, queryParam);
     // const { data } = response;
     
@@ -94,8 +95,34 @@ export const handleReviewsServerSideRequests = (): GetServerSideProps => {
     //   }
     // }
 
+    const query = `
+      query ($phoneId: ID){
+        reviews(phoneId: $phoneId) {
+          id
+          avgRate
+          brand
+          model
+          reviews {
+            rate
+            text
+          }
+        }
+      }`
+
+    const reviewsResponse = await fetch("http://localhost:3333/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query,
+        variables: { phoneId: queryParam[1] }
+      })
+    })
+    const reviews = await reviewsResponse.json()
+    console.log(reviews)
     return {
-      props: {}
+      props: {
+        data: reviews.data.reviews
+      }
     }
   }
 
