@@ -36,15 +36,15 @@ export default function phoneReducer(state: PhoneType[], action: ActionType): Ph
   switch (action.type) {
     case PhoneStateActions.ADD: {
       if (action.payload.dataToAdd) {
-        const { id, brand, model, priceRange, reviewsCount } = action.payload.dataToAdd;
-        console.log("action.payload.dataToAdd: ", action.payload.dataToAdd)
-        return [...state, { id, brand, model, priceRange, avgRate: null, reviewsCount }]
+        const { id, brand, model, priceRange, reviewsCount, avgRate } = action.payload.dataToAdd;
+        // console.log("action.payload.dataToAdd: ", action.payload.dataToAdd)
+        return [...state, { id, brand, model, priceRange, avgRate, reviewsCount }]
       }
       return []
     };
     case PhoneStateActions.DELETE: {
       return state.filter(({ id }) => {
-        if (action.payload.idToDelete) console.log(action.payload.idToDelete.phoneId)
+        // if (action.payload.idToDelete) console.log(action.payload.idToDelete.phoneId)
         if (action.payload.idToDelete) return id !== action.payload.idToDelete.phoneId
         return false
       })

@@ -9,9 +9,10 @@ import { handleDeletePhone } from "~utils/handleClientSideRequests"
 export default function Table() {
 
   const { phonesData, dispatch } = usePhoneContext()
+  // console.log(phonesData)
 
 
-  const mapPhonesToTableRows = ({ id, brand, model, priceRange: priceRange, avgRate: avgRate, reviewsCount } : PhoneType) => {
+  const mapPhonesToTableRows = ({ id, brand, model, priceRange, avgRate, reviewsCount } : PhoneType) => {
 
     const tdClassName = "border text-center px-8 py-4"
     const priceRangeSymbol = "$"

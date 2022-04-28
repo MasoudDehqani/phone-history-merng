@@ -64,16 +64,16 @@ const ReviewType = new GraphQLObjectType({
           priceRange: { type: GraphQLString }
         },
         resolve: async (parent, args) => {
-          console.log("args: ", args)
+          // console.log("args: ", args)
           if (Object.keys(args).length === 0) return PhoneDocument.find({});
           const { phoneId, brand, model, priceRange } = args;
           const findValue = phoneId || brand || model || priceRange;
-          console.log("findValue: ", findValue)
+          // console.log("findValue: ", findValue)
           const keyValuePair = Object.entries(args)[0]
           if (findValue) {
-            console.log("cherto pert")
+            // console.log("cherto pert")
             const phone = await PhoneDocument.find({ [keyValuePair[0]]: keyValuePair[1] })
-            console.log("phone: ", phone)
+            // console.log("phone: ", phone)
             return phone
           }
         }
@@ -114,12 +114,13 @@ const ReviewType = new GraphQLObjectType({
           priceRange: { type: GraphQLInt }
         },
         resolve(parent, args) {
-          console.log("args: ", args)
+          // console.log("args: ", args)
           const newPhone = new PhoneDocument({
             brand: args.brand,
             model: args.model,
             priceRange: args.priceRange,
             reviewsCount: 0,
+            avgRate: 0
           });
           return newPhone.save();
         }
@@ -137,15 +138,27 @@ const ReviewType = new GraphQLObjectType({
             rate: args.rate,
             text: args.text
           });
-          const phone = await PhoneDocument.findById(args.phoneId)
-          phone.reviews.push(newReview);
-          phone.reviewsCount++;
-          if (!phone.avgRate) {
-            phone.avgRate = args.rate;
-            return phone.save();
-          }
-          phone.avgRate = (phone.avgRate * phone.reviews.length + args.rate) / (phone.reviews.length + 1);
-          return phone.save();
+          // const phone = await PhoneDocument.findById(args.phoneId)
+          // const phone = await PhoneDocument.aggregate([
+          //   { $match: { _id: new mongoose.Types.ObjectId(args.phoneId) } },
+          //   { $project: { reviews: { $push: newReview }, reviewsCount: { $inc: { reviewsCount: 1 } } } },
+          // ])
+          const phone = await PhoneDocument.updateOne(
+            { _id: new mongoose.Types.ObjectId(args.phoneId) },
+            [
+              { $set: { reviews: { $concatArrays: ["$reviews", [newReview]] }, reviewsCount: { $add: ["$reviewsCount", 1] } } },
+              { $set: { avgRate: { $avg: "$reviews.rate" } } }
+            ]
+          )
+          // phone.reviews.push(newReview);
+          // phone.reviewsCount++;
+          // if (!phone.avgRate) {
+          //   phone.avgRate = args.rate;
+          //   return phone.save();
+          // }
+          // phone.avgRate = (phone.avgRate * phone.reviews.length + args.rate) / (phone.reviews.length + 1);
+          // phone.save();
+          return phone;
           // return newReview.save();
         }
       },

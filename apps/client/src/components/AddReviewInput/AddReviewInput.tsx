@@ -21,24 +21,37 @@ export default function AddReviewInput() {
   const { rateInput, reviewInput } = inputValues;
 
   const handleAddReview = async () => {
-    const body = {
-      reviewId: "",
-      reviewRate: rateInput,
-      reviewText: reviewInput
-    }
+    const phoneId = router.query.reviewCategory as string;
     
-    // const response = await fetch(`${BaseUrls.ReviewsBaseUrl}${router.query.reviewCategory}`, {
-    //   method: CrudMethods.POST,
-    //   body: JSON.stringify(body),
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    // })
+    const body = {
+      phoneId,
+      rate: rateInput,
+      text: reviewInput
+    }
 
-    // const data = await response.json()
-    // setReviewId(data.data.id)
-    // refreshReviews()
+
+    const query = `
+      mutation ($phoneId: ID, $rate: Float, $text: String) {
+        addReview(phoneId: $phoneId, rate: $rate, text: $text) {
+          id
+        }
+      }`
+    
+    const response = await fetch('/graphql', {
+      method: CrudMethods.POST,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: body
+      }),
+
+    })
+
+    const data = await response.json()
+    setReviewId(data.data.addReview.id)
+    refreshReviews()
   }
 
   return (
