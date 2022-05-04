@@ -46,10 +46,8 @@ export const handleAddPhone = (brand: string, model: string, priceRange: number,
         },
       })
 
-      // console.log("response: ", response)
       
       const data = await response.json()
-      // console.log("data: ", data)
       const { id } = data;
       const payloadData = {
         id, ...data.data.addPhone
@@ -84,8 +82,6 @@ export const handleDeletePhone = (phoneId: string, dispatch: Dispatch<any>) => {
       })
 
       const data = await response.json()
-      // console.log("phoneId: ", phoneId)
-      // console.log("response: ", response, "data: ", data)
       dispatch({ type: PhoneStateActions.DELETE, payload: { idToDelete: { phoneId } } })
     } catch(err) {
       console.log(err)

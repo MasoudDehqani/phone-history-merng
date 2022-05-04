@@ -10,7 +10,6 @@ export default function Reviews({ data } : { data: PhoneReviewDataType }) {
   // const [reviews, setReviews] = useState<PhoneReviewType[]>(data)
   // const sum = (f: number, s: PhoneReviewType): number => f + +s.reviewRate;
   if (!data) return <h1>No Reviews Yet</h1>
-  console.log("data in reviews component: ", data)
   const { reviews, avgRate, brand, model } = data;
   // const avgRate = (reviews.reduce(sum, 0) / reviews.length).toFixed(1)
 

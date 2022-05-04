@@ -24,11 +24,6 @@ const handleRequest = async (url: string, param: string) => {
 export const handlePhonesServerSideRequests = (): GetServerSideProps => {
   const getServerSideProps: GetServerSideProps = async (ctx) => {
     const params = getQueryParamValue(ctx.params);
-    // console.log("params: ", params)
-    const queryArgs = {
-      [params[0]]: params[1]
-    }
-    // console.log({ [params[0]]: params[1] })
     const query = params[0] !== "" ? `
       query ($${params[0]}: String) {
         phones(${params[0]}: $${params[0]}) {
@@ -42,7 +37,7 @@ export const handlePhonesServerSideRequests = (): GetServerSideProps => {
       }` : `
         query {
           phones {
-            id
+            _id
             brand
             model
             priceRange
@@ -51,7 +46,6 @@ export const handlePhonesServerSideRequests = (): GetServerSideProps => {
           }
         }`
     
-    // console.log(query)
     try {
       const phonesData = await fetch("http://localhost:3333/graphql", {
         method: "POST",
@@ -63,9 +57,8 @@ export const handlePhonesServerSideRequests = (): GetServerSideProps => {
           }
         }),
       });
-      // console.log(phonesData)
       const phonesDataJson = await phonesData.json();
-      // console.log(phonesDataJson)
+      console.log(phonesDataJson);
       return {
         props: {
           phones: phonesDataJson.data.phones,
@@ -85,7 +78,6 @@ export const handlePhonesServerSideRequests = (): GetServerSideProps => {
 export const handleReviewsServerSideRequests = (): GetServerSideProps => {
   const getServerSideProps: GetServerSideProps = async (ctx) => {
     const queryParam = getQueryParamValue(ctx.params);
-    // console.log(queryParam)
     // const response: ReviewsDataType = await handleRequest(BaseUrls.ReviewsBaseUrl, queryParam);
     // const { data } = response;
     
@@ -118,7 +110,6 @@ export const handleReviewsServerSideRequests = (): GetServerSideProps => {
       })
     })
     const reviews = await reviewsResponse.json()
-    // console.log(reviews)
     return {
       props: {
         data: reviews.data.reviews

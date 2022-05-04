@@ -9,17 +9,16 @@ import { handleDeletePhone } from "~utils/handleClientSideRequests"
 export default function Table() {
 
   const { phonesData, dispatch } = usePhoneContext()
-  // console.log(phonesData)
 
 
-  const mapPhonesToTableRows = ({ id, brand, model, priceRange, avgRate, reviewsCount } : PhoneType) => {
+  const mapPhonesToTableRows = ({ _id, brand, model, priceRange, avgRate, reviewsCount } : PhoneType) => {
 
     const tdClassName = "border text-center px-8 py-4"
     const priceRangeSymbol = "$"
     const ratingPercent = (Number(avgRate) * 100) / 5;
 
     return (
-      <tr key={id}>
+      <tr key={_id}>
         <td className={tdClassName}>
           <Link href={`/brands/${brand}`}>
             <a>{brand}</a>
@@ -36,7 +35,7 @@ export default function Table() {
           </Link>
         </td>
         <td className={tdClassName}>
-          <Link href={{ pathname: `/phone-reviews/${id}` }}>
+          <Link href={{ pathname: `/phone-reviews/${_id}` }}>
             <a>
               <div className="flex w-full items-center">
                 <div className="text-gray-400 text-xl relative m-0 p-0" style={{ unicodeBidi: "bidi-override" }}>
@@ -53,7 +52,7 @@ export default function Table() {
           </Link>
         </td>
         <td className={tdClassName}>
-          <button className="text-red-600" onClick={handleDeletePhone(id, dispatch)}>DELETE</button>
+          <button className="text-red-600" onClick={handleDeletePhone(_id, dispatch)}>DELETE</button>
         </td>
       </tr>
     )

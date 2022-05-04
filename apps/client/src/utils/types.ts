@@ -13,7 +13,7 @@ export type ReviewsDataType = {
 }
 
 export type PhoneType = {
-  id: string,
+  _id: string,
   brand: string,
   model: string,
   priceRange: 1 | 2 | 3 | 4 | 5,
@@ -22,7 +22,7 @@ export type PhoneType = {
 }
 
 export type ReviewType = {
-  reviewId: string,
+  _id: string,
   rate: number,
   reviewText: string
 }

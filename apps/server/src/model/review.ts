@@ -8,4 +8,8 @@ export const ReviewDocumentSchema = new Schema({
   text: { type: String, required: true },
 });
 
+export function test2() {
+  console.log("")
+}
+
 export const ReviewDocument = mongoose.model('reviews', ReviewDocumentSchema);

@@ -8,7 +8,6 @@ import useReviewsContext from "~components/Hooks/useReviewsContext"
 export default function AddReviewInput() {
 
   const router = useRouter()
-  // console.log(router)
 
   const { refreshReviews } = useReviewsContext()
   const { inputValues, handleInputValues } = useInputValues({
