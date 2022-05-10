@@ -24,7 +24,7 @@ export default function AddReviewInput() {
     
     const body = {
       phoneId,
-      rate: rateInput,
+      rate: parseFloat(rateInput),
       text: reviewInput
     }
 
@@ -32,7 +32,7 @@ export default function AddReviewInput() {
     const query = `
       mutation ($phoneId: ID, $rate: Float, $text: String) {
         addReview(phoneId: $phoneId, rate: $rate, text: $text) {
-          id
+          _id
         }
       }`
     
@@ -49,7 +49,7 @@ export default function AddReviewInput() {
     })
 
     const data = await response.json()
-    setReviewId(data.data.addReview.id)
+    console.log(data)
     refreshReviews()
   }
 
